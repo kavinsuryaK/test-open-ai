@@ -1,20 +1,19 @@
 name: Code Review with OpenAI
 
-on:
-  pull_request:
-    types: [opened, synchronize]
+on: [push, pull_request]
 
 jobs:
   review_code:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      - name: Run OpenAI Code Review
-        uses: NumaanAshraf/review-code-openai@v1
+      - name: Review code with OpenAI
+        uses: numaanashraf/review-code-openai@v1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           openai-api-key: ${{ secrets.OPENAI_API_KEY }}
           model: "gpt-4"
           review-scope: "full"
+        continue-on-error: true
