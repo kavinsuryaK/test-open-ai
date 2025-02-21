@@ -1,28 +1,33 @@
+require("dotenv").config();
 const express = require("express");
+const cors = require("cors");
+const morgan = require("morgan");
+
+const apiRoutes = require("./routes/api");
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
-// Middleware to parse JSON request bodies
-app.use(express.json());
+// Middleware
+app.use(express.json()); // Parse JSON requests
+app.use(cors()); // Enable CORS
+app.use(morgan("dev")); // Logging requests
 
-// Basic route
+// Routes
+app.use("/api", apiRoutes);
+
+// Default route
 app.get("/", (req, res) => {
-  res.send("Welcome to the Node.js Server!");
+  res.send("Welcome to the Advanced Node.js Server!");
 });
 
-// Sample API endpoint
-app.get("/api/hello", (req, res) => {
-  res.json({ message: "Hello from API!" });
-});
-
-// POST endpoint example
-app.post("/api/data", (req, res) => {
-  const data = req.body;
-  res.json({ message: "Data received!", data });
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error: "Internal Server Error" });
 });
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
